@@ -31,23 +31,23 @@ from mathex.tokens import (
 )
 from mathex.error import IllegalNameError, RedifinitionError, UndefinedError
 from mathex.enums import Error, Flags, default_flags, States
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Optional
 
 
-operand_order: List[TokenType | None] = [
+operand_order: List[Optional[TokenType]] = [
     None,
     TokenType.LEFT_PAREN,
     TokenType.COMMA,
     TokenType.BI_OPERATOR,
     TokenType.UN_OPERATOR,
 ]
-unary_operator_order: List[TokenType | None] = [
+unary_operator_order: List[Optional[TokenType]] = [
     None,
     TokenType.LEFT_PAREN,
     TokenType.COMMA,
     TokenType.UN_OPERATOR,
 ]
-binary_operator_order: List[TokenType | None] = [
+binary_operator_order: List[Optional[TokenType]] = [
     TokenType.CONSTANT,
     TokenType.VARIABLE,
     TokenType.RIGHT_PAREN,
@@ -100,8 +100,8 @@ class Mathex:
 
         del self._tokens[name]
 
-    def evaluate(self, expression: str) -> Tuple[float | None, Error | None]:
-        last_token: TokenType | None = None
+    def evaluate(self, expression: str) -> Tuple[Optional[float], Optional[Error]]:
+        last_token: Optional[TokenType] = None
 
         ops_stack: List[Token] = []
         out_queue: List[Token] = []
@@ -246,7 +246,7 @@ class Mathex:
                         break
 
                 identifier: str = expression[i:j]
-                fetched: Token | None = self._tokens.get(identifier)
+                fetched: Optional[Token] = self._tokens.get(identifier)
 
                 if fetched is None:
                     return None, Error.UNDEFINED
@@ -264,7 +264,7 @@ class Mathex:
                 i = j - 1
                 continue
 
-            token: Token | None = None
+            token: Optional[Token] = None
 
             if expression[i] == "+":
                 if (

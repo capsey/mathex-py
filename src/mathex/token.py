@@ -19,7 +19,7 @@
 # THE SOFTWARE.
 
 from enum import Enum, auto
-from typing import Callable, List, Tuple
+from typing import Callable, List, Tuple, Optional
 from dataclasses import dataclass
 from math import fmod
 from mathex.enums import Error
@@ -55,13 +55,13 @@ class TokenType(Enum):
 @dataclass
 class Token:
     type: TokenType
-    value: float | None = None
-    variable: Ref | None = None
-    function: Function | None = None
-    unop: UnaryOperator | None = None
-    biop: BinaryOperator | None = None
-    prec: int | None = None
-    lassoc: bool | None = None
+    value: Optional[float] = None
+    variable: Optional[Ref] = None
+    function: Optional[Function] = None
+    unop: Optional[UnaryOperator] = None
+    biop: Optional[BinaryOperator] = None
+    prec: Optional[int] = None
+    lassoc: Optional[bool] = None
 
     @staticmethod
     def from_constant(value: float) -> "Token":
