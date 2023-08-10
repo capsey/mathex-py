@@ -111,11 +111,10 @@ class Mathex:
         arg_stack: List[int] = []
         arg_queue: List[int] = []
 
-        i = -1
-        while i < len(expression) - 1:
-            i += 1
-
+        i = 0
+        while i < len(expression):
             if expression[i] == " ":
+                i += 1
                 continue
 
             if expression[i].isdigit() or expression[i] == ".":
@@ -131,18 +130,18 @@ class Mathex:
                 exponent_sign: bool = True
 
                 state: States = States.INTEGER_PART
-                j = i - 1
+                j = i
 
-                while j < len(expression) - 1:
-                    j += 1
-
+                while j < len(expression):
                     if state == States.INTEGER_PART:
                         if expression[j].isdigit():
                             value = (value * 10) + float(expression[j])
+                            j += 1
                             continue
 
                         if expression[j] == ".":
                             state = States.FRACTION_PART
+                            j += 1
                             continue
 
                         if (
@@ -150,6 +149,7 @@ class Mathex:
                             and Flags.SCIENTIFIC_NOTATION in self._flags
                         ):
                             state = States.EXP_START
+                            j += 1
                             continue
 
                     elif state == States.FRACTION_PART:
@@ -159,6 +159,7 @@ class Mathex:
                         if expression[j].isdigit():
                             value += float(expression[j]) / decimal_place
                             decimal_place *= 10
+                            j += 1
                             continue
 
                         if (
@@ -166,6 +167,7 @@ class Mathex:
                             and Flags.SCIENTIFIC_NOTATION in self._flags
                         ):
                             state = States.EXP_START
+                            j += 1
                             continue
 
                     elif state == States.EXP_START:
@@ -175,11 +177,13 @@ class Mathex:
                         if expression[j].isdigit():
                             exponent = (exponent * 10) + float(expression[j])
                             state = States.EXP_VALUE
+                            j += 1
                             continue
 
                         if expression[j] in ("+", "-"):
                             exponent_sign = expression[j] == "+"
                             state = States.EXP_VALUE
+                            j += 1
                             continue
 
                     elif state == States.EXP_VALUE:
@@ -189,6 +193,7 @@ class Mathex:
                         if expression[j].isdigit():
                             exponent = (exponent * 10) + float(expression[j])
                             state = States.EXP_VALUE
+                            j += 1
                             continue
 
                     # If reached here means number literal has ended
@@ -208,7 +213,7 @@ class Mathex:
                 out_queue.append(Token.from_constant(value))
 
                 last_token = TokenType.CONSTANT
-                i = j - 1
+                i = j
                 continue
 
             if expression[i].isalpha() or expression[i] == "_":
@@ -243,13 +248,13 @@ class Mathex:
                 if arg_count == 0:
                     arg_count += 1
 
-                j = i
+                j = i + 1
 
-                while j < len(expression) - 1:
-                    j += 1
-
+                while j < len(expression):
                     if not expression[j].isalnum() and expression[j] != "_":
                         break
+
+                    j += 1
 
                 identifier: str = expression[i:j]
                 fetched: Optional[Token] = self._tokens.get(identifier)
@@ -267,7 +272,7 @@ class Mathex:
                     out_queue.append(fetched)
 
                 last_token = fetched.type
-                i = j - 1
+                i = j
                 continue
 
             token: Optional[Token] = None
@@ -352,6 +357,7 @@ class Mathex:
 
                 ops_stack.append(token)
                 last_token = token.type
+                i += 1
                 continue
 
             if expression[i] == "(":
@@ -370,6 +376,7 @@ class Mathex:
 
                 ops_stack.append(Token(TokenType.LEFT_PAREN))
                 last_token = TokenType.LEFT_PAREN
+                i += 1
                 continue
 
             if expression[i] == ")":
@@ -383,6 +390,7 @@ class Mathex:
                         if Flags.IMPLICIT_PARENTHESES not in self._flags:
                             return None, Error.SYNTAX_ERROR
 
+                        i += 1
                         continue
 
                     while ops_stack[-1].type != TokenType.LEFT_PAREN:
@@ -408,6 +416,7 @@ class Mathex:
                         return None, Error.SYNTAX_ERROR
 
                 last_token = TokenType.RIGHT_PAREN
+                i += 1
                 continue
 
             if expression[i] == ",":
@@ -424,6 +433,7 @@ class Mathex:
                     if Flags.IMPLICIT_PARENTHESES not in self._flags:
                         return None, Error.SYNTAX_ERROR
 
+                    i += 1
                     continue
 
                 while ops_stack[-1].type != TokenType.LEFT_PAREN:
@@ -438,6 +448,7 @@ class Mathex:
 
                 arg_count += 1
                 last_token = TokenType.COMMA
+                i += 1
                 continue
 
             # Any character that was not captured by previous checks is considered invalid
