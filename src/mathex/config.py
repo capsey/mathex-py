@@ -112,7 +112,9 @@ class Mathex:
         arg_queue: List[int] = []
 
         i = -1
-        while (i := i + 1) < len(expression):
+        while i < len(expression) - 1:
+            i += 1
+
             if expression[i] == " ":
                 continue
 
@@ -131,7 +133,9 @@ class Mathex:
                 state: States = States.INTEGER_PART
                 j = i - 1
 
-                while (j := j + 1) < len(expression):
+                while j < len(expression) - 1:
+                    j += 1
+
                     if state == States.INTEGER_PART:
                         if expression[j].isdigit():
                             value = (value * 10) + float(expression[j])
@@ -241,7 +245,9 @@ class Mathex:
 
                 j = i
 
-                while (j := j + 1) < len(expression):
+                while j < len(expression) - 1:
+                    j += 1
+
                     if not expression[j].isalnum() and expression[j] != "_":
                         break
 
