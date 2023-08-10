@@ -52,38 +52,33 @@ class TokenType(Enum):
     UN_OPERATOR = auto()
 
 
-@dataclass(kw_only=True)
+@dataclass
 class Token:
     type: TokenType
+    value: float | None = None
+    variable: Ref | None = None
+    function: Function | None = None
+    unop: UnaryOperator | None = None
+    biop: BinaryOperator | None = None
+    prec: int | None = None
+    lassoc: bool | None = None
 
+    @staticmethod
+    def from_constant(value: float) -> "Token":
+        return Token(type=TokenType.CONSTANT, value=value)
 
-@dataclass(kw_only=True)
-class ConstantToken(Token):
-    type: TokenType = TokenType.CONSTANT
-    value: float
+    @staticmethod
+    def from_variable(variable: str) -> "Token":
+        return Token(type=TokenType.VARIABLE, variable=variable)
 
+    @staticmethod
+    def from_function(function: str) -> "Token":
+        return Token(type=TokenType.FUNCTION, function=function)
 
-@dataclass(kw_only=True)
-class VariableToken(Token):
-    type: TokenType = TokenType.VARIABLE
-    variable: Ref
+    @staticmethod
+    def from_unary_operator(unop: str) -> "Token":
+        return Token(type=TokenType.UN_OPERATOR, unop=unop)
 
-
-@dataclass(kw_only=True)
-class FunctionToken(Token):
-    type: TokenType = TokenType.FUNCTION
-    function: Function
-
-
-@dataclass(kw_only=True)
-class BiOperatorToken(Token):
-    type: TokenType = TokenType.BI_OPERATOR
-    biop: BinaryOperator
-    prec: int
-    lassoc: bool
-
-
-@dataclass(kw_only=True)
-class UnOperatorToken(Token):
-    type: TokenType = TokenType.UN_OPERATOR
-    unop: UnaryOperator
+    @staticmethod
+    def from_binary_operator(biop: str, prec: int, lassoc: bool) -> "Token":
+        return Token(type=TokenType.BI_OPERATOR, biop=biop, prec=prec, lassoc=lassoc)

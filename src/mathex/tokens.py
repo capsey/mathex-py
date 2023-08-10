@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from mathex.token import Token, BiOperatorToken, UnOperatorToken
+from mathex.token import Token
 from math import fmod
 
 
@@ -46,13 +46,13 @@ def neg_wrapper(x: float) -> float:
     return -x
 
 
-add_token: Token = BiOperatorToken(biop=add_wrapper, prec=2, lassoc=True)
-sub_token: Token = BiOperatorToken(biop=sub_wrapper, prec=2, lassoc=True)
-mul_token: Token = BiOperatorToken(biop=mul_wrapper, prec=3, lassoc=True)
-div_token: Token = BiOperatorToken(biop=div_wrapper, prec=3, lassoc=True)
+add_token: Token = Token.from_binary_operator(add_wrapper, prec=2, lassoc=True)
+sub_token: Token = Token.from_binary_operator(sub_wrapper, prec=2, lassoc=True)
+mul_token: Token = Token.from_binary_operator(mul_wrapper, prec=3, lassoc=True)
+div_token: Token = Token.from_binary_operator(div_wrapper, prec=3, lassoc=True)
 
-pow_token: Token = BiOperatorToken(biop=pow, prec=2, lassoc=True)
-mod_token: Token = BiOperatorToken(biop=fmod, prec=2, lassoc=True)
+pow_token: Token = Token.from_binary_operator(pow, prec=2, lassoc=True)
+mod_token: Token = Token.from_binary_operator(fmod, prec=2, lassoc=True)
 
-pos_token: Token = UnOperatorToken(unop=pos_wrapper)
-neg_token: Token = UnOperatorToken(unop=neg_wrapper)
+pos_token: Token = Token.from_unary_operator(pos_wrapper)
+neg_token: Token = Token.from_unary_operator(neg_wrapper)

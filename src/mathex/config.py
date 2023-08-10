@@ -18,15 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from mathex.token import (
-    Ref,
-    Function,
-    TokenType,
-    Token,
-    ConstantToken,
-    VariableToken,
-    FunctionToken,
-)
+from mathex.token import Ref, Function, TokenType, Token
 from mathex.tokens import (
     add_token,
     sub_token,
@@ -82,7 +74,7 @@ class Mathex:
         if name in self._tokens:
             raise RedifinitionError(name, self._tokens[name])
 
-        self._tokens[name] = VariableToken(variable=variable)
+        self._tokens[name] = Token.from_variable(variable)
 
     def add_constant(self, name: str, value: float):
         if not verify_identifier(name):
@@ -91,7 +83,7 @@ class Mathex:
         if name in self._tokens:
             raise RedifinitionError(name, self._tokens[name])
 
-        self._tokens[name] = ConstantToken(value=value)
+        self._tokens[name] = Token.from_constant(value)
 
     def add_function(self, name: str, function: Function):
         if not verify_identifier(name):
@@ -100,7 +92,7 @@ class Mathex:
         if name in self._tokens:
             raise RedifinitionError(name, self._tokens[name])
 
-        self._tokens[name] = FunctionToken(function=function)
+        self._tokens[name] = Token.from_function(function)
 
     def remove(self, name: str):
         if name not in self._tokens:
@@ -209,7 +201,7 @@ class Mathex:
                 if exponent != 0:
                     value *= pow(10.0 if exponent_sign else 0.1, exponent)
 
-                out_queue.append(ConstantToken(value=value))
+                out_queue.append(Token.from_constant(value))
 
                 last_token = TokenType.CONSTANT
                 i = j - 1
@@ -370,7 +362,7 @@ class Mathex:
                     if arg_count == 0:
                         arg_count += 1
 
-                ops_stack.append(Token(type=TokenType.LEFT_PAREN))
+                ops_stack.append(Token(TokenType.LEFT_PAREN))
                 last_token = TokenType.LEFT_PAREN
                 continue
 
