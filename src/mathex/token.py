@@ -1,13 +1,33 @@
-from enum import Enum, auto
-from typing import Callable, TypeAlias
+# Copyright (c) 2023 Caps Lock
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
 from dataclasses import dataclass
+from enum import Enum, auto
 from math import fmod
-from mathex.enums import Error
+from typing import Callable, List, Optional, Tuple
 
+from .enums import Error
 
-Function: TypeAlias = Callable[[list[float]], tuple[float, Error]]
-BinaryOperator: TypeAlias = Callable[[float, float], float]
-UnaryOperator: TypeAlias = Callable[[float], float]
+Function = Callable[[List[float]], Tuple[float, Error]]
+BinaryOperator = Callable[[float, float], float]
+UnaryOperator = Callable[[float], float]
 
 
 class Ref:
@@ -32,38 +52,69 @@ class TokenType(Enum):
     UN_OPERATOR = auto()
 
 
-@dataclass(kw_only=True)
+@dataclass
 class Token:
     type: TokenType
+    value: Optional[float] = None
+    variable: Optional[Ref] = None
+    function: Optional[Function] = None
+    unop: Optional[UnaryOperator] = None
+    biop: Optional[BinaryOperator] = None
+    prec: Optional[int] = None
+    lassoc: Optional[bool] = None
+
+    @staticmethod
+    def from_constant(value: float) -> "Token":
+        return Token(type=TokenType.CONSTANT, value=value)
+
+    @staticmethod
+    def from_variable(variable: str) -> "Token":
+        return Token(type=TokenType.VARIABLE, variable=variable)
+
+    @staticmethod
+    def from_function(function: str) -> "Token":
+        return Token(type=TokenType.FUNCTION, function=function)
+
+    @staticmethod
+    def from_unary_operator(unop: str) -> "Token":
+        return Token(type=TokenType.UN_OPERATOR, unop=unop)
+
+    @staticmethod
+    def from_binary_operator(biop: str, prec: int, lassoc: bool) -> "Token":
+        return Token(type=TokenType.BI_OPERATOR, biop=biop, prec=prec, lassoc=lassoc)
 
 
-@dataclass(kw_only=True)
-class ConstantToken(Token):
-    type: TokenType = TokenType.CONSTANT
-    value: float
+def add_wrapper(a: float, b: float) -> float:
+    return a + b
 
 
-@dataclass(kw_only=True)
-class VariableToken(Token):
-    type: TokenType = TokenType.VARIABLE
-    variable: Ref
+def sub_wrapper(a: float, b: float) -> float:
+    return a - b
 
 
-@dataclass(kw_only=True)
-class FunctionToken(Token):
-    type: TokenType = TokenType.FUNCTION
-    function: Function
+def mul_wrapper(a: float, b: float) -> float:
+    return a * b
 
 
-@dataclass(kw_only=True)
-class BiOperatorToken(Token):
-    type: TokenType = TokenType.BI_OPERATOR
-    biop: BinaryOperator
-    prec: int
-    lassoc: bool
+def div_wrapper(a: float, b: float) -> float:
+    return a / b
 
 
-@dataclass(kw_only=True)
-class UnOperatorToken(Token):
-    type: TokenType = TokenType.UN_OPERATOR
-    unop: UnaryOperator
+def pos_wrapper(x: float) -> float:
+    return x
+
+
+def neg_wrapper(x: float) -> float:
+    return -x
+
+
+add_token: Token = Token.from_binary_operator(add_wrapper, prec=2, lassoc=True)
+sub_token: Token = Token.from_binary_operator(sub_wrapper, prec=2, lassoc=True)
+mul_token: Token = Token.from_binary_operator(mul_wrapper, prec=3, lassoc=True)
+div_token: Token = Token.from_binary_operator(div_wrapper, prec=3, lassoc=True)
+
+pow_token: Token = Token.from_binary_operator(pow, prec=2, lassoc=True)
+mod_token: Token = Token.from_binary_operator(fmod, prec=2, lassoc=True)
+
+pos_token: Token = Token.from_unary_operator(pos_wrapper)
+neg_token: Token = Token.from_unary_operator(neg_wrapper)
