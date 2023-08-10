@@ -19,15 +19,15 @@
 # THE SOFTWARE.
 
 from enum import Enum, auto
-from typing import Callable, TypeAlias
+from typing import Callable
 from dataclasses import dataclass
 from math import fmod
 from mathex.enums import Error
 
 
-Function: TypeAlias = Callable[[list[float]], tuple[float, Error]]
-BinaryOperator: TypeAlias = Callable[[float, float], float]
-UnaryOperator: TypeAlias = Callable[[float], float]
+Function = Callable[[list[float]], tuple[float, Error]]
+BinaryOperator = Callable[[float, float], float]
+UnaryOperator = Callable[[float], float]
 
 
 class Ref:
