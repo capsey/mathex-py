@@ -6,6 +6,8 @@ from mathex.token import (
     ConstantToken,
     VariableToken,
     FunctionToken,
+)
+from mathex.tokens import (
     add_token,
     sub_token,
     mul_token,
@@ -15,6 +17,7 @@ from mathex.token import (
     pos_token,
     neg_token,
 )
+from mathex.error import IllegalNameError, RedifinitionError, UndefinedError
 from mathex.enums import Error, Flags, default_flags, States
 
 
@@ -47,11 +50,14 @@ class Mathex:
         if (
             not name
             or name[0].isdigit()
-            or any(not char.isalnum() and char != "_" for char in name)
-        ):
-            raise Error(
-                f'Illegal name "{name}": only letters, digits and underscores are allowed.'
+            or not all(
+                char.isascii() and (char.isalnum() or char == "_") for char in name
             )
+        ):
+            raise IllegalNameError(name)
+
+        if name in self._tokens:
+            raise RedifinitionError(name, self._tokens[name])
 
         self._tokens[name] = VariableToken(variable=variable)
 
@@ -59,11 +65,14 @@ class Mathex:
         if (
             not name
             or name[0].isdigit()
-            or any(not char.isalnum() and char != "_" for char in name)
-        ):
-            raise Error(
-                f'Illegal name "{name}": only letters, digits and underscores are allowed.'
+            or not all(
+                char.isascii() and (char.isalnum() or char == "_") for char in name
             )
+        ):
+            raise IllegalNameError(name)
+
+        if name in self._tokens:
+            raise RedifinitionError(name, self._tokens[name])
 
         self._tokens[name] = ConstantToken(value=value)
 
@@ -71,17 +80,20 @@ class Mathex:
         if (
             not name
             or name[0].isdigit()
-            or any(not char.isalnum() and char != "_" for char in name)
-        ):
-            raise Error(
-                f'Illegal name "{name}": only letters, digits and underscores are allowed.'
+            or not all(
+                char.isascii() and (char.isalnum() or char == "_") for char in name
             )
+        ):
+            raise IllegalNameError(name)
+
+        if name in self._tokens:
+            raise RedifinitionError(name, self._tokens[name])
 
         self._tokens[name] = FunctionToken(function=function)
 
     def remove(self, name: str):
         if name not in self._tokens:
-            raise Error(f'Identifier "{name}" is not defined')
+            raise UndefinedError(name)
 
         del self._tokens[name]
 
@@ -114,8 +126,9 @@ class Mathex:
                 exponent_sign: bool = True
 
                 state: States = States.INTEGER_PART
+                j = i - 1
 
-                for j in range(i, len(expression)):
+                while (j := j + 1) < len(expression):
                     if state == States.INTEGER_PART:
                         if expression[j].isdigit():
                             value = (value * 10) + float(expression[j])
@@ -173,8 +186,6 @@ class Mathex:
 
                     # If reached here means number literal has ended
                     break
-                else:
-                    j += 1
 
                 # Cannot have scientific notation separator without specifying exponent
                 if state == States.EXP_START:
@@ -225,11 +236,11 @@ class Mathex:
                 if arg_count == 0:
                     arg_count += 1
 
-                for j in range(i + 1, len(expression)):
+                j = i
+
+                while (j := j + 1) < len(expression):
                     if not expression[j].isalnum() and expression[j] != "_":
                         break
-                else:
-                    j += 1
 
                 identifier: str = expression[i:j]
                 fetched: Token = self._tokens.get(identifier)
@@ -348,7 +359,7 @@ class Mathex:
                     if arg_count == 0:
                         arg_count += 1
 
-                ops_stack.append(Token(TokenType.LEFT_PAREN))
+                ops_stack.append(Token(type=TokenType.LEFT_PAREN))
                 last_token = TokenType.LEFT_PAREN
                 continue
 
@@ -463,11 +474,11 @@ class Mathex:
 
             elif token.type == TokenType.FUNCTION:
                 args_num: int = arg_queue.pop(0)
-                args = list(reversed(res_stack.pop() for _ in range(args_num)))
+                args = list(reversed([res_stack.pop() for _ in range(args_num)]))
                 func_result, error = token.function(args)
 
                 if error != None:
-                    return error
+                    return None, error
 
                 res_stack.append(func_result)
 

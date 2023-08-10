@@ -18,7 +18,7 @@ class Ref:
         self._value = value
 
     def get(self) -> float:
-        self._value
+        return self._value
 
 
 class TokenType(Enum):
@@ -67,15 +67,3 @@ class BiOperatorToken(Token):
 class UnOperatorToken(Token):
     type: TokenType = TokenType.UN_OPERATOR
     unop: UnaryOperator
-
-
-add_token: Token = BiOperatorToken(biop=lambda a, b: a + b, prec=2, lassoc=True)
-sub_token: Token = BiOperatorToken(biop=lambda a, b: a - b, prec=2, lassoc=True)
-mul_token: Token = BiOperatorToken(biop=lambda a, b: a * b, prec=3, lassoc=True)
-div_token: Token = BiOperatorToken(biop=lambda a, b: a / b, prec=3, lassoc=True)
-
-pow_token: Token = BiOperatorToken(biop=pow, prec=2, lassoc=True)
-mod_token: Token = BiOperatorToken(biop=fmod, prec=2, lassoc=True)
-
-pos_token: Token = UnOperatorToken(unop=lambda x: x)
-neg_token: Token = UnOperatorToken(unop=lambda x: -x)
