@@ -5,9 +5,9 @@ from math import fmod
 from mathex.enums import Error
 
 
-Function: TypeAlias = type[Callable[[list[float]], tuple[float, Error]]]
-BinaryOperator: TypeAlias = type[Callable[[float, float], float]]
-UnaryOperator: TypeAlias = type[Callable[[float], float]]
+Function: TypeAlias = Callable[[list[float]], tuple[float, Error]]
+BinaryOperator: TypeAlias = Callable[[float, float], float]
+UnaryOperator: TypeAlias = Callable[[float], float]
 
 
 class Ref:

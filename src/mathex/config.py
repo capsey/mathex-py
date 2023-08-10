@@ -28,17 +28,25 @@ operand_order: list[TokenType | None] = [
     TokenType.BI_OPERATOR,
     TokenType.UN_OPERATOR,
 ]
-unary_operator_order: list[TokenType | None] = (
+unary_operator_order: list[TokenType | None] = [
     None,
     TokenType.LEFT_PAREN,
     TokenType.COMMA,
     TokenType.UN_OPERATOR,
-)
-binary_operator_order: list[TokenType | None] = (
+]
+binary_operator_order: list[TokenType | None] = [
     TokenType.CONSTANT,
     TokenType.VARIABLE,
     TokenType.RIGHT_PAREN,
-)
+]
+
+
+def verify_identifier(name: str) -> bool:
+    return bool(
+        name
+        and not name[0].isdigit()
+        and all(char.isascii() and (char.isalnum() or char == "_") for char in name)
+    )
 
 
 class Mathex:
@@ -47,13 +55,7 @@ class Mathex:
         self._tokens: dict[str, Token] = {}
 
     def add_variable(self, name: str, variable: Ref):
-        if (
-            not name
-            or name[0].isdigit()
-            or not all(
-                char.isascii() and (char.isalnum() or char == "_") for char in name
-            )
-        ):
+        if not verify_identifier(name):
             raise IllegalNameError(name)
 
         if name in self._tokens:
@@ -62,13 +64,7 @@ class Mathex:
         self._tokens[name] = VariableToken(variable=variable)
 
     def add_constant(self, name: str, value: float):
-        if (
-            not name
-            or name[0].isdigit()
-            or not all(
-                char.isascii() and (char.isalnum() or char == "_") for char in name
-            )
-        ):
+        if not verify_identifier(name):
             raise IllegalNameError(name)
 
         if name in self._tokens:
@@ -77,13 +73,7 @@ class Mathex:
         self._tokens[name] = ConstantToken(value=value)
 
     def add_function(self, name: str, function: Function):
-        if (
-            not name
-            or name[0].isdigit()
-            or not all(
-                char.isascii() and (char.isalnum() or char == "_") for char in name
-            )
-        ):
+        if not verify_identifier(name):
             raise IllegalNameError(name)
 
         if name in self._tokens:
@@ -97,7 +87,7 @@ class Mathex:
 
         del self._tokens[name]
 
-    def evaluate(self, expression: str) -> (float, Error):
+    def evaluate(self, expression: str) -> tuple[float | None, Error | None]:
         last_token: TokenType | None = None
 
         ops_stack: list[Token] = []
@@ -243,7 +233,7 @@ class Mathex:
                         break
 
                 identifier: str = expression[i:j]
-                fetched: Token = self._tokens.get(identifier)
+                fetched: Token | None = self._tokens.get(identifier)
 
                 if fetched is None:
                     return None, Error.UNDEFINED
@@ -261,7 +251,7 @@ class Mathex:
                 i = j - 1
                 continue
 
-            token: Token = None
+            token: Token | None = None
 
             if expression[i] == "+":
                 if (
