@@ -19,13 +19,13 @@
 # THE SOFTWARE.
 
 from enum import Enum, auto
-from typing import Callable
+from typing import Callable, List, Tuple
 from dataclasses import dataclass
 from math import fmod
 from mathex.enums import Error
 
 
-Function = Callable[[list[float]], tuple[float, Error]]
+Function = Callable[[List[float]], Tuple[float, Error]]
 BinaryOperator = Callable[[float, float], float]
 UnaryOperator = Callable[[float], float]
 

@@ -27,6 +27,7 @@ from mathex import (
     UndefinedError,
 )
 from pytest import fixture, approx, raises
+from typing import List, Tuple
 
 
 @fixture
@@ -91,13 +92,13 @@ def test_add_constant(config):
 
 
 def test_add_function(config):
-    def foo_wrapper(args: list[float]) -> tuple[float, Error]:
+    def foo_wrapper(args: List[float]) -> Tuple[float, Error]:
         if len(args) != 0:
             return Error.INCORRECT_ARGS_NUM
 
         return -1.25, None
 
-    def abs_wrapper(args: list[float]) -> tuple[float, Error]:
+    def abs_wrapper(args: List[float]) -> Tuple[float, Error]:
         if len(args) != 1:
             return Error.INCORRECT_ARGS_NUM
 

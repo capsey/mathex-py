@@ -20,6 +20,7 @@
 
 from mathex import Mathex, Ref, Error, Flags, default_flags
 from pytest import fixture, approx
+from typing import List, Tuple
 
 x: float = 5
 y: float = 3
@@ -27,35 +28,35 @@ z: float = 6
 pi: float = 3.14
 
 
-def foo_wrapper(args: list[float]) -> tuple[float, Error]:
+def foo_wrapper(args: List[float]) -> Tuple[float, Error]:
     if len(args) != 2:
         return None, Error.INCORRECT_ARGS_NUM
 
     return args[0], None
 
 
-def bar_wrapper(args: list[float]) -> tuple[float, Error]:
+def bar_wrapper(args: List[float]) -> Tuple[float, Error]:
     if len(args) != 0:
         return None, Error.INCORRECT_ARGS_NUM
 
     return 5.43, None
 
 
-def f_wrapper(args: list[float]) -> tuple[float, Error]:
+def f_wrapper(args: List[float]) -> Tuple[float, Error]:
     if len(args) != 1:
         return None, Error.INCORRECT_ARGS_NUM
 
     return args[0] * args[0], None
 
 
-def g_wrapper(args: list[float]) -> tuple[float, Error]:
+def g_wrapper(args: List[float]) -> Tuple[float, Error]:
     if len(args) != 1:
         return None, Error.INCORRECT_ARGS_NUM
 
     return 3 * args[0] - 1, None
 
 
-def h_wrapper(args: list[float]) -> tuple[float, Error]:
+def h_wrapper(args: List[float]) -> Tuple[float, Error]:
     if len(args) != 2:
         return None, Error.INCORRECT_ARGS_NUM
 

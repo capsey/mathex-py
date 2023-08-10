@@ -39,22 +39,23 @@ from mathex.tokens import (
 )
 from mathex.error import IllegalNameError, RedifinitionError, UndefinedError
 from mathex.enums import Error, Flags, default_flags, States
+from typing import List, Tuple, Dict
 
 
-operand_order: list[TokenType | None] = [
+operand_order: List[TokenType | None] = [
     None,
     TokenType.LEFT_PAREN,
     TokenType.COMMA,
     TokenType.BI_OPERATOR,
     TokenType.UN_OPERATOR,
 ]
-unary_operator_order: list[TokenType | None] = [
+unary_operator_order: List[TokenType | None] = [
     None,
     TokenType.LEFT_PAREN,
     TokenType.COMMA,
     TokenType.UN_OPERATOR,
 ]
-binary_operator_order: list[TokenType | None] = [
+binary_operator_order: List[TokenType | None] = [
     TokenType.CONSTANT,
     TokenType.VARIABLE,
     TokenType.RIGHT_PAREN,
@@ -72,7 +73,7 @@ def verify_identifier(name: str) -> bool:
 class Mathex:
     def __init__(self, flags: Flags = default_flags):
         self._flags: Flags = flags
-        self._tokens: dict[str, Token] = {}
+        self._tokens: Dict[str, Token] = {}
 
     def add_variable(self, name: str, variable: Ref):
         if not verify_identifier(name):
@@ -107,16 +108,16 @@ class Mathex:
 
         del self._tokens[name]
 
-    def evaluate(self, expression: str) -> tuple[float | None, Error | None]:
+    def evaluate(self, expression: str) -> Tuple[float | None, Error | None]:
         last_token: TokenType | None = None
 
-        ops_stack: list[Token] = []
-        out_queue: list[Token] = []
-        res_stack: list[float] = []
+        ops_stack: List[Token] = []
+        out_queue: List[Token] = []
+        res_stack: List[float] = []
 
         arg_count: int = 0
-        arg_stack: list[int] = []
-        arg_queue: list[int] = []
+        arg_stack: List[int] = []
+        arg_queue: List[int] = []
 
         i = -1
         while (i := i + 1) < len(expression):
