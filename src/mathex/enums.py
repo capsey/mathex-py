@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from enum import Flag, Enum, auto
+from enum import Enum, Flag, auto
 
 
 class Flags(Flag):
@@ -56,7 +56,7 @@ class Error(Enum):
     INCORRECT_ARGS_NUM = auto()
 
 
-class States(Enum):
+class NumParts(Enum):
     INTEGER_PART = auto()
     FRACTION_PART = auto()
     EXP_START = auto()

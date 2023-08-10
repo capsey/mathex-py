@@ -18,12 +18,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from enum import Enum, auto
-from typing import Callable, List, Tuple, Optional
 from dataclasses import dataclass
+from enum import Enum, auto
 from math import fmod
-from mathex.enums import Error
+from typing import Callable, List, Optional, Tuple
 
+from .enums import Error
 
 Function = Callable[[List[float]], Tuple[float, Error]]
 BinaryOperator = Callable[[float, float], float]
@@ -82,3 +82,39 @@ class Token:
     @staticmethod
     def from_binary_operator(biop: str, prec: int, lassoc: bool) -> "Token":
         return Token(type=TokenType.BI_OPERATOR, biop=biop, prec=prec, lassoc=lassoc)
+
+
+def add_wrapper(a: float, b: float) -> float:
+    return a + b
+
+
+def sub_wrapper(a: float, b: float) -> float:
+    return a - b
+
+
+def mul_wrapper(a: float, b: float) -> float:
+    return a * b
+
+
+def div_wrapper(a: float, b: float) -> float:
+    return a / b
+
+
+def pos_wrapper(x: float) -> float:
+    return x
+
+
+def neg_wrapper(x: float) -> float:
+    return -x
+
+
+add_token: Token = Token.from_binary_operator(add_wrapper, prec=2, lassoc=True)
+sub_token: Token = Token.from_binary_operator(sub_wrapper, prec=2, lassoc=True)
+mul_token: Token = Token.from_binary_operator(mul_wrapper, prec=3, lassoc=True)
+div_token: Token = Token.from_binary_operator(div_wrapper, prec=3, lassoc=True)
+
+pow_token: Token = Token.from_binary_operator(pow, prec=2, lassoc=True)
+mod_token: Token = Token.from_binary_operator(fmod, prec=2, lassoc=True)
+
+pos_token: Token = Token.from_unary_operator(pos_wrapper)
+neg_token: Token = Token.from_unary_operator(neg_wrapper)
