@@ -1,6 +1,7 @@
 # Mathematical Expressions for Python
 
 [![tests status](https://github.com/capsey/mathex-py/actions/workflows/tests.yml/badge.svg)](https://github.com/capsey/mathex-py/actions/workflows/tests.yml)
+[![PyPI package version Badge](https://img.shields.io/pypi/v/mathex)](https://pypi.org/project/mathex/)
 
 - [Mathematical Expressions for Python](#mathematical-expressions-for-python)
   - [What is Mathex?](#what-is-mathex)
