@@ -68,19 +68,19 @@ class Token:
         return Token(type=TokenType.CONSTANT, value=value)
 
     @staticmethod
-    def from_variable(variable: str) -> "Token":
+    def from_variable(variable: Ref) -> "Token":
         return Token(type=TokenType.VARIABLE, variable=variable)
 
     @staticmethod
-    def from_function(function: str) -> "Token":
+    def from_function(function: Function) -> "Token":
         return Token(type=TokenType.FUNCTION, function=function)
 
     @staticmethod
-    def from_unary_operator(unop: str) -> "Token":
+    def from_unary_operator(unop: UnaryOperator) -> "Token":
         return Token(type=TokenType.UN_OPERATOR, unop=unop)
 
     @staticmethod
-    def from_binary_operator(biop: str, prec: int, lassoc: bool) -> "Token":
+    def from_binary_operator(biop: BinaryOperator, prec: int, lassoc: bool) -> "Token":
         return Token(type=TokenType.BI_OPERATOR, biop=biop, prec=prec, lassoc=lassoc)
 
 
