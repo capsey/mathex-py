@@ -35,11 +35,28 @@ def verify_identifier(name: str) -> bool:
 
 
 class Mathex:
+    """Configuration for parsing."""
+
     def __init__(self, flags: Flags = default_flags):
+        """Initializes a Mathex object with the specified evaluation flags.
+
+        Args:
+            flags (Flags, optional): Evaluation flags. Defaults to default_flags.
+        """
         self._flags: Flags = flags
         self._tokens: Dict[str, Token] = {}
 
     def add_variable(self, name: str, variable: Ref):
+        """Inserts a variable into the configuration object to be available for use in the expressions.
+
+        Args:
+            name (str): String representing name of the variable. (should only contain letters, digits or underscore and cannot start with a digit)
+            variable (Ref): Reference to value of the variable. Lifetime of a reference is responsibility of a caller.
+
+        Raises:
+            IllegalNameError: Name contains illegal characters.
+            RedifinitionError: Variable was already defined.
+        """
         if not verify_identifier(name):
             raise IllegalNameError(name)
 
@@ -49,6 +66,16 @@ class Mathex:
         self._tokens[name] = Token.from_variable(variable)
 
     def add_constant(self, name: str, value: float):
+        """Inserts a constant into the configuration object to be available for use in the expressions.
+
+        Args:
+            name (str): String representing name of the variable. (should only contain letters, digits or underscore and cannot start with a digit)
+            value (float): Value of a constant variable.
+
+        Raises:
+            IllegalNameError: Name contains illegal characters.
+            RedifinitionError: Variable was already defined.
+        """
         if not verify_identifier(name):
             raise IllegalNameError(name)
 
@@ -58,6 +85,16 @@ class Mathex:
         self._tokens[name] = Token.from_constant(value)
 
     def add_function(self, name: str, function: Function):
+        """Inserts a function into the configuration object to be available for use in the expressions.
+
+        Args:
+            name (str): String representing name of the function. (should only contain letters, digits or underscore and cannot start with a digit)
+            function (Function): Function that takes list of arguments and returns tuple of result and None or tuple or None and error code.
+
+        Raises:
+            IllegalNameError: Name contains illegal characters.
+            RedifinitionError: Function was already defined.
+        """
         if not verify_identifier(name):
             raise IllegalNameError(name)
 
@@ -67,13 +104,26 @@ class Mathex:
         self._tokens[name] = Token.from_function(function)
 
     def remove(self, name: str):
+        """Removes a variable or a function with given name that was added using `addVariable`, `addConstant` or `addFunction`.
+
+        Args:
+            name (str): String representing name of the variable or function to remove.
+
+        Raises:
+            UndefinedError: Variable or function with given name is not defined.
+        """
         if name not in self._tokens:
             raise UndefinedError(name)
 
         del self._tokens[name]
 
     def evaluate(self, expression: str) -> Tuple[Optional[float], Optional[Error]]:
-        return evaluate(expression, self._flags, self._tokens)
+        """Takes mathematical expression and evaluates its numerical value.
 
-    def _read_flag(self, flag: Flags) -> bool:
-        return flag in self._flags
+        Args:
+            expression (str): String to evaluate.
+
+        Returns:
+            Tuple[Optional[float], Optional[Error]]: Result or an error code.
+        """
+        return evaluate(expression, self._flags, self._tokens)

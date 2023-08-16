@@ -26,18 +26,36 @@ from typing import Callable, List, Optional, Tuple
 from .enums import Error
 
 Function = Callable[[List[float]], Tuple[float, Error]]
+"""Function that takes list of arguments and returns tuple of result and None or tuple or None and error code."""
 BinaryOperator = Callable[[float, float], float]
 UnaryOperator = Callable[[float], float]
 
 
 class Ref:
+    """A class representing a reference to a floating-point value."""
+
     def __init__(self, value: float):
+        """Initializes a Ref object with the specified initial value.
+
+        Args:
+            value (float): Initial value of a Ref.
+        """
         self._value = value
 
     def set(self, value: float):
+        """Sets the value of the reference to the given float value.
+
+        Args:
+            value (float): New value of a Ref.
+        """
         self._value = value
 
     def get(self) -> float:
+        """Retrieves the current value stored in the reference.
+
+        Returns:
+            float: Current value of a Ref.
+        """
         return self._value
 
 

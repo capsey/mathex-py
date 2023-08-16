@@ -22,20 +22,33 @@ from enum import Enum, Flag, auto
 
 
 class Flags(Flag):
+    """Evaluation parameters."""
+
     IMPLICIT_PARENTHESES = auto()
+    """Enable implicit parentheses."""
     IMPLICIT_MULTIPLICATION = auto()
+    """Enable implicit multiplication."""
     SCIENTIFIC_NOTATION = auto()
+    """Enable numbers in scientific notation."""
     ADDITION = auto()
+    """Enable addition operator."""
     SUBSTRACTION = auto()
+    """Enable substraction operator."""
     MULTIPLICATION = auto()
+    """Enable multiplication operator."""
     DIVISION = auto()
+    """Enable division operator."""
     EXPONENTIATION = auto()
+    """Enable exponentiation operator."""
     MODULUS = auto()
+    """Enable modulus operator."""
     IDENTITY = auto()
+    """Enable unary identity operator."""
     NEGATION = auto()
+    """Enable unary negation operator."""
 
 
-default_flags = (
+default_flags: Flags = (
     Flags.IMPLICIT_PARENTHESES
     | Flags.IMPLICIT_MULTIPLICATION
     | Flags.SCIENTIFIC_NOTATION
@@ -46,14 +59,22 @@ default_flags = (
     | Flags.IDENTITY
     | Flags.NEGATION
 )
+"""Default parameters. Does not include exponentiation and modulus operators."""
 
 
 class Error(Enum):
+    """Error codes."""
+
     DIVISION_BY_ZERO = auto()
+    """Division by zero."""
     SYNTAX_ERROR = auto()
+    """Expression syntax is invalid."""
     UNDEFINED = auto()
+    """Function or variable name not found."""
     INVALID_ARGS = auto()
+    """Arguments validation failed."""
     INCORRECT_ARGS_NUM = auto()
+    """Incorrect number of arguments."""
 
 
 class NumParts(Enum):
